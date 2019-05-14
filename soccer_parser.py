@@ -1,17 +1,22 @@
 from collections import namedtuple
 import sys
 
+SOCCER_DATA_FILE = "soccer.dat"
+
+TEAM_INDEX = 1
+GOALS_FOR_INDEX = 6
+GOALS_AGAINST_INDEX = 8
 
 TeamGoalDifference = namedtuple("TeamScoreSpread", "team goal_difference")
 
 
 def parse_line(line_parts):
-    # skip anything under 9 elements to avoid out of bound indices
-    if len(line_parts) < 9:
+    # skip anything under GOALS_AGAINST_INDEX
+    if len(line_parts) <= GOALS_AGAINST_INDEX:
         return
-    team = line_parts[1]
-    goals_for = line_parts[6]
-    goals_against = line_parts[8]
+    team = line_parts[TEAM_INDEX]
+    goals_for = line_parts[GOALS_FOR_INDEX]
+    goals_against = line_parts[GOALS_AGAINST_INDEX]
 
     if not goals_for.isdigit():
         return
@@ -29,7 +34,7 @@ least_goal_difference = TeamGoalDifference(
 )
 
 # lazily read w_data line by line
-with open("soccer.dat") as f:
+with open(SOCCER_DATA_FILE) as f:
     for line in f:
         team_score_diff = parse_line(line.split())
         if not team_score_diff:

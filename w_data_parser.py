@@ -1,17 +1,22 @@
 from collections import namedtuple
 import sys
 
+WEATHER_DATA_FILE = "w_data.dat"
+
+DAY_INDEX = 0
+WEATHER_MAX_INDEX = 1
+WEATHER_MIN_INDEX = 2
 
 WeatherSpread = namedtuple("WeatherSpread", "day spread")
 
 
 def parse_line(line_parts):
-    # skip anything under 3 elements to avoid out of bound indices
-    if len(line_parts) < 3:
+    # skip anything under outside WEATHER_MIN_INDEX, the last index we care about
+    if len(line_parts) <= WEATHER_MIN_INDEX:
         return
-    day = line_parts[0]
-    weather_max = line_parts[1]
-    weather_min = line_parts[2]
+    day = line_parts[DAY_INDEX]
+    weather_max = line_parts[WEATHER_MAX_INDEX]
+    weather_min = line_parts[WEATHER_MIN_INDEX]
 
     if not day.isdigit():
         return
@@ -31,7 +36,7 @@ def parse_line(line_parts):
 least_weather_spread = WeatherSpread(day=-1, spread=sys.float_info.max)
 
 # lazily read w_data line by line
-with open("w_data.dat") as f:
+with open(WEATHER_DATA_FILE) as f:
     for line in f:
         weather = parse_line(line.split())
         if not weather:
